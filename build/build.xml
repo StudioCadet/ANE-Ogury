@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Air Native Extension Build Scripts" default="all">
+
+	<!-- Config -->
+	<property file="build.config" />
+
+	<!-- All -->
+	<target name="all" depends="android,swc,swf,package" description="Full build of extension" />
+
+	<!-- Android -->
+	<target name="android" description="Build android Library">
+		<echo message="Build android library ..."/>
+		
+		<delete file="../bin/android/${name}.jar" />
+		<delete dir="../bin/android/res" />
+		
+		<delete dir="../bin/android/temp" />
+		<mkdir dir="../bin/android/temp/classes" />
+
+		<javac destdir="../bin/android/temp/classes" includeantruntime="false" target="1.6" source="1.6" fork="yes" executable="${javac.dir}/javac${bin.ext}">
+			<src path="../android/src" />
+			<classpath>
+				<pathelement location="${android.sdk}/android.jar" />
+				<pathelement location="${flex.sdk}/lib/android/FlashRuntimeExtensions.jar"/>
+				<pathelement location="${android.supportV4}/android-support-v4.jar" />
+				<pathelement location="../android/libs/presage-lib.jar"/>
+			</classpath>
+		</javac>
+
+		<mkdir dir="../bin/android/temp/zip" />
+		
+		<!-- Uncomment if you don't already have android-support-v4.jar included in your project through another ANE -->
+		<!--
+		<unzip dest="../bin/android/temp/zip" src="${android.supportV4}/android-support-v4.jar" />
+		<copy todir="../bin/android/temp/classes/android">
+			<fileset dir="../bin/android/temp/zip/android" />
+		</copy>
+		-->
+		
+		<unzip dest="../bin/android/temp/zip" src="../android/libs/presage-lib.jar" />
+		<copy todir="../bin/android/temp/classes/io">
+			<fileset dir="../bin/android/temp/zip/io" />
+		</copy>
+		<copy todir="../bin/android/temp/classes/shared">
+			<fileset dir="../bin/android/temp/zip/shared" />
+		</copy>
+		
+		<jar basedir="../bin/android/temp/classes" destfile="../bin/android/${name}.jar"/>
+		<delete dir="../bin/android/temp"/>
+		
+		<echo message="Copying resources ..." />
+		<copy todir="../bin/android/res">
+			<fileset dir="../android/res" />
+		</copy>
+		
+		<echo message="Done."/>
+	</target>
+	
+	<!-- ActionScript -->
+	<target name="swc" description="Build SWC library">
+		<echo message="Building SWC library ..."/>
+		<fileset dir="../actionscript" casesensitive="yes" id="classfiles">
+			<include name="src/**/*.as" />
+		</fileset>
+
+		<pathconvert property="classlist" refid="classfiles" pathsep=" " dirsep=".">
+			<regexpmapper from=".*src.(.*)\.as" to="\1" />
+		</pathconvert>
+
+		<exec executable="${flex.sdk}/bin/compc${bat.ext}" failonerror="true">
+			<env key="AIR_SDK_HOME" value="${flex.sdk}"/>
+			<arg line='-source-path ../actionscript/src' />
+			<arg line='-output ../bin/actionscript/${name}.swc' />
+			<arg line='-swf-version=13' />
+			<arg line='-external-library-path+="${flex.sdk}/frameworks/libs/air/airglobal.swc"' />
+			<arg line='-include-classes ${classlist}' />
+		</exec>
+		<echo message="Done."/>
+	</target>
+	
+	<!-- Propagate library.swf -->
+	<target name="swf" description="Extract and propagate library.swf">
+		<echo message="Extracting library.swf ..."/>
+		
+		<mkdir dir="../bin/actionscript/content" />
+		<unzip src="../bin/actionscript/${name}.swc" dest="../bin/actionscript/content" overwrite="true" />
+		<copy file="../bin/actionscript/content/library.swf" todir="../bin/default/" overwrite="true" />
+		<copy file="../bin/actionscript/content/library.swf" todir="../bin/android/" overwrite="true" />
+		<delete dir="../bin/actionscript/content"/>
+		
+		<echo message="Done."/>
+	</target>
+
+	<!-- Packaging -->
+	<target name="package" description="Create the extension package">
+		<echo message="Packaging the ANE ..."/>
+		<exec executable="${flex.sdk}/bin/adt${bat.ext}" failonerror="true" dir="../bin">
+            <arg value="-package"/>
+            <arg value="-target"/>
+            <arg value="ane"/>
+            <arg value="${name}.ane"/>
+            <arg value="../build/extension.xml"/>
+            <arg line="-swc actionscript/${name}.swc"/>
+            <arg line="-platform Android-ARM -C android/ ."/>
+			<arg line="-platform Android-x86 -C android/ ."/>
+            <arg line="-platform default -C default/ ."/>
+        </exec>
+		<copy file="../bin/actionscript/${name}.swc" todir="../bin" overwrite="true"/>
+		<echo message="Done."/>
+	</target>
+	
+	<!-- ASDoc -->
+	<target name="doc" description="Generate ASDoc">
+		<echo message="Generating asdoc ..."/>
+		<delete dir="../doc"/>
+		<exec executable="${flex.sdk}/bin/asdoc${bin.ext}" failonerror="true">
+            <arg line='-load-config="${flex.sdk}/frameworks/airmobile-config.xml"'/>
+			<arg line="-main-title '${name} ANE API Documentation'" />
+            <arg line="-window-title '${name} ANE API Documentation'" />
+            <arg line="-source-path ../actionscript/src" />
+			<arg line="-doc-sources ../actionscript/src" />
+			<arg line="-output ../doc" />
+        </exec>
+		<echo message="Done."/>
+	</target>
+	
+	<!-- Export -->
+	<target name="export" description="Export the compiled ANE">
+		<echo message="Exporting the compiled ANE to ${export.dir} ..."/>
+		<copy file="../bin/${name}.ane" todir="${export.dir}" overwrite="true"/>
+		<echo message="Done."/>
+	</target>
+	
+</project>
