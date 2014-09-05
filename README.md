@@ -1,7 +1,7 @@
 ANE-Ogury
 ===============
 
-Air native extension for Ogury Presage, on Android
+Air native extension for Ogury Presage, on Android (ARM and x86)
 
 Documentation
 ----------
