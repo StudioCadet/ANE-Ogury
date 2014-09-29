@@ -5,6 +5,7 @@ import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
+
 /**
  * The main extension file. Mainly instantiates the ExtensionContext.
  */
