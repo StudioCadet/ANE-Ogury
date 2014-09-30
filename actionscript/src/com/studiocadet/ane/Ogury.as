@@ -100,7 +100,7 @@ package com.studiocadet.ane {
 						onSuccess();
 				}
 				else if(ev.code == NO_AD) {
-					log("Serving ad failed.");
+					log("No ad to be served.");
 					if(onFailure != null)
 						onFailure();
 				}
