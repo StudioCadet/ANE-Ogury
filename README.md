@@ -3,6 +3,8 @@ ANE-Ogury
 
 Air native extension for Ogury Presage, on Android (ARM and x86)
 
+ - Ogury SDK version : 1.5.1
+
 Documentation
 ----------
 
@@ -52,12 +54,20 @@ You need to add this to your application XML descriptor :
 
                 ...
                 
-				<!-- PRESAGE SDK -->
+				<!-- PRESAGE LIBRARY -->
 				<meta-data android:name="presage_key" android:value="YOUR_APP_KEY"/>
 				<service android:name="io.presage.services.PresageServiceImp"/>
-				<activity android:name="io.presage.activities.WebviewAdActivity" android:launchMode="singleInstance" 
+				<activity android:name="io.presage.activities.WebviewAdActivity" android:launchMode="singleInstance"
 						  android:label="YOUR_APP_NAME"
 						  android:theme="@style/Presage.Theme.Transparent">
+					<intent-filter>
+						<action android:name="io.presage.intent.action.LAUNCH_WEBVIEW" />
+						<category android:name="android.intent.category.DEFAULT" />
+					</intent-filter>
+				</activity>
+				<activity android:name="io.presage.activities.VideoAdActivity" android:launchMode="singleInstance"
+						  android:label="@string/app_name"
+						  android:theme="@style/Presage.Theme.Transparent" android:configChanges="orientation">
 					<intent-filter>
 						<action android:name="io.presage.intent.action.LAUNCH_WEBVIEW" />
 						<category android:name="android.intent.category.DEFAULT" />
