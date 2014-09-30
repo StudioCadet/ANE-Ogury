@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.studiocadet.functions.OguryServeAdFunction;
 import com.studiocadet.functions.OguryStartFunction;
 
 public class OguryExtensionContext extends FREContext {
@@ -39,6 +40,7 @@ public class OguryExtensionContext extends FREContext {
 		Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
 		
 		functions.put("ogury_Start", new OguryStartFunction());
+		functions.put("ogury_ServeAd", new OguryServeAdFunction());
 		
 		OguryExtension.log(functions.size() + " extension functions declared.");
 		

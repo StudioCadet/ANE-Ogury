@@ -11,13 +11,17 @@ package com.studiocadet.ane {
 	 */
 	public class Ogury {
 		
+		// EVENTS :
+		private static const AD_SERVED:String = "OguryEvent.AdServed";
+		private static const NO_AD:String = "OguryEvent.NoAd";
+		
 		// CONSTANTS :
 		private static const EXTENSION_ID:String = "com.studiocadet.Ogury";
 		
 		// PROPERTIES :
 		/** The logging function you want to use. Defaults to trace. */
 		public static var logger:Function = trace;
-		/** The prefix appended to every log message. Defaults to "[Inneractive]". */
+		/** The prefix appended to every log message. Defaults to "[Ogury]". */
 		public static var logPrefix:String = "[Ogury]";
 		
 		private static var _isSupported:Boolean;
@@ -33,11 +37,28 @@ package com.studiocadet.ane {
 			return _isSupported;
 		}
 		
+		private static var _isInitialized:Boolean;
+		/** Whether the extension has already been initialized. */
+		public static function get isInitialized():Boolean { return _isInitialized; }
+		
+		/** The extension context instance used. */
+		private static var context:ExtensionContext;
+		
+		
 		// METHODS :
 		/**
 		 * Starts Ogury if Ogury is available.
 		 */
 		public static function start():void {
+			
+			// Init only once :
+			if(_isInitialized) {
+				log("Ogury is already initialized. Aborting.");
+				return;
+			}
+			_isInitialized = true;
+			
+			// OS not supported :
 			if(!isSupported()) {
 				log("Ogury is not supported on this platform.");
 				return;
@@ -45,9 +66,47 @@ package com.studiocadet.ane {
 			
 			// Initialize the native part :
 			log("Starting Ogury ...");
-			const context:ExtensionContext = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
+			context = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
 			context.call("ogury_Start");
 			log("Ogury started.");
+		}
+		
+		/**
+		 * Tries to serve an interstitial ad through Ogury.
+		 * 
+		 * @param onSuccess function():void
+		 * @param onFailure	function():void
+		 */
+		public static function serveAd(onSuccess:Function, onFailure:Function):void {
+			if(!_isInitialized) {
+				log("Ogury is not initialized! Aborting.");
+				return;
+			}
+			
+			if(!isSupported()) {
+				log("Ogury is not supported on this platform. Aborting.");
+				return;
+			}
+			
+			log("Trying to serve an interstitial ad ...");
+			context.addEventListener(StatusEvent.STATUS, onStatusEvent, false, 0, true);
+			context.call("ogury_ServeAd");
+			
+			function onStatusEvent(ev:StatusEvent):void {
+				context.removeEventListener(StatusEvent.STATUS, onStatusEvent);
+				if(ev.code == AD_SERVED) {
+					log("Ad served succesfully.");
+					if(onSuccess != null)
+						onSuccess();
+				}
+				else if(ev.code == NO_AD) {
+					log("Serving ad failed.");
+					if(onFailure != null)
+						onFailure();
+				}
+				else 
+					log("Unknown event : [" + ev.code + "] " + ev.level);
+			}
 		}
 		
 		
