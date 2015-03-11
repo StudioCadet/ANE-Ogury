@@ -17,19 +17,8 @@ public class OguryStartFunction implements FREFunction {
 		ogury.setContext(context.getActivity().getBaseContext());
 		ogury.start();
 		OguryExtension.log("Ogury started ("
-						+ "version : " + Presage.VERSION + " ; "
-						+ "build : " + Presage.BUILD + " ; "
 						+ "Key : " + ogury.getKey() + " ; "
 						+ "Env : "  + ogury.getEnv() + ").");
-		
-//		ogury.adToServe("interstitial", new IADHanlder() {
-//			@Override public void onAdNotFound() {
-//				OguryExtension.log("Ogury interstitial ad not found.");
-//			}
-//			@Override public void onAdFound() {
-//				OguryExtension.log("Ogury interstitial ad found.");
-//			}
-//		});
 		
 		return null;
 	}

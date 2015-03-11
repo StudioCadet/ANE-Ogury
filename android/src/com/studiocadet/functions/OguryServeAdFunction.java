@@ -1,7 +1,7 @@
 package com.studiocadet.functions;
 
 import io.presage.Presage;
-import io.presage.utils.IADHanlder;
+import io.presage.utils.IADHandler;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
@@ -16,6 +16,7 @@ public class OguryServeAdFunction implements FREFunction {
 	// EVENTS :
 	private static final String AD_SERVED = "OguryEvent.AdServed";
 	private static final String NO_AD = "OguryEvent.NoAd";
+	private static final String AD_CLOSED = "OguryEvent.AdClosed";
 	
 
 	@Override
@@ -24,7 +25,13 @@ public class OguryServeAdFunction implements FREFunction {
 		final FREContext extensionContext = context;
 		
 		OguryExtension.log("Trying to serve an interstitial ad through Ogury ...");
-		Presage.getInstance().adToServe("interstitial", new IADHanlder() {
+		Presage.getInstance().adToServe("interstitial", new IADHandler() {
+			
+			@Override
+			public void onAdClosed() {
+				OguryExtension.log("Ad closed.");
+				extensionContext.dispatchStatusEventAsync(AD_CLOSED, "");
+			}
 			
 			@Override
 			public void onAdNotFound() {

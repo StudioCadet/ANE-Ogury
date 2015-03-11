@@ -14,6 +14,7 @@ package com.studiocadet.ane {
 		// EVENTS :
 		private static const AD_SERVED:String = "OguryEvent.AdServed";
 		private static const NO_AD:String = "OguryEvent.NoAd";
+		private static const AD_CLOSED:String = "OguryEvent.AdClosed";
 		
 		// CONSTANTS :
 		private static const EXTENSION_ID:String = "com.studiocadet.Ogury";
@@ -74,10 +75,11 @@ package com.studiocadet.ane {
 		/**
 		 * Tries to serve an interstitial ad through Ogury.
 		 * 
-		 * @param onSuccess function():void
-		 * @param onFailure	function():void
+		 * @param onAdShown 	function():void
+		 * @param onFailure		function():void
+		 * @param onAdClosed	function():void
 		 */
-		public static function serveAd(onSuccess:Function, onFailure:Function):void {
+		public static function serveAd(onAdShown:Function, onFailure:Function, onAdClosed:Function = null):void {
 			if(!_isInitialized) {
 				log("Ogury is not initialized! Aborting.");
 				return;
@@ -96,13 +98,18 @@ package com.studiocadet.ane {
 				context.removeEventListener(StatusEvent.STATUS, onStatusEvent);
 				if(ev.code == AD_SERVED) {
 					log("Ad served succesfully.");
-					if(onSuccess != null)
-						onSuccess();
+					if(onAdShown != null)
+						onAdShown();
 				}
 				else if(ev.code == NO_AD) {
 					log("No ad to be served.");
 					if(onFailure != null)
 						onFailure();
+				}
+				else if(ev.code == AD_CLOSED) {
+					log("Ad closed.");
+					if(onAdClosed != null)
+						onAdClosed();
 				}
 				else 
 					log("Unknown event : [" + ev.code + "] " + ev.level);

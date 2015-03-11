@@ -26,23 +26,15 @@ You need to add this to your application XML descriptor :
 			
 			<!-- Default internet and boot permissions -->
 			<uses-permission android:name="android.permission.INTERNET" />
-			<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-			<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 			<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 			<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 			<!-- Tracking permissions -->
-			<uses-permission android:name="android.permission.GET_TASKS" />
-			<uses-permission android:name="android.permission.GET_TOP_ACTIVITY_INFO" />
-			<uses-permission android:name="android.permission.READ_HISTORY_BOOKMARKS" />
-			<uses-permission android:name="android.permission.WRITE_HISTORY_BOOKMARKS" />
 			<uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
 			<uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS" />
-			
+
 			<!-- Shortcut permissions -->
-			<uses-permission android:name="android.permission.INSTALL_SHORTCUT" />
-			<uses-permission android:name="android.permission.UNINSTALL_SHORTCUT" />
 			<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 			<uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
             
@@ -57,17 +49,9 @@ You need to add this to your application XML descriptor :
 				<!-- PRESAGE LIBRARY -->
 				<meta-data android:name="presage_key" android:value="YOUR_APP_KEY"/>
 				<service android:name="io.presage.services.PresageServiceImp"/>
-				<activity android:name="io.presage.activities.WebviewAdActivity" android:launchMode="singleInstance"
-						  android:label="YOUR_APP_NAME"
-						  android:theme="@style/Presage.Theme.Transparent">
-					<intent-filter>
-						<action android:name="io.presage.intent.action.LAUNCH_WEBVIEW" />
-						<category android:name="android.intent.category.DEFAULT" />
-					</intent-filter>
-				</activity>
-				<activity android:name="io.presage.activities.VideoAdActivity" android:launchMode="singleInstance"
+				<activity android:name="io.presage.activities.PresageActivity"
 						  android:label="@string/app_name"
-						  android:theme="@style/Presage.Theme.Transparent" android:configChanges="orientation">
+						  android:theme="@style/Presage.Theme.Transparent">
 					<intent-filter>
 						<action android:name="io.presage.intent.action.LAUNCH_WEBVIEW" />
 						<category android:name="android.intent.category.DEFAULT" />
@@ -76,10 +60,11 @@ You need to add this to your application XML descriptor :
 				<receiver android:name="io.presage.receivers.BootReceiver">
 					<intent-filter>
 						<action android:name="android.intent.action.BOOT_COMPLETED"/>
+						<action android:name="android.intent.action.DATE_CHANGED"/>
 						<action android:name="io.presage.receivers.BootReceiver.RESTART_SERVICE"/>
 					</intent-filter>
 				</receiver>
-                
+				
             </application>
 
         </manifest>
