@@ -3,7 +3,7 @@ ANE-Ogury
 
 Air native extension for Ogury Presage, on Android (ARM and x86)
 
- - Ogury SDK version : 1.5.1
+ - Ogury SDK version : 1.7.2
 
 Documentation
 ----------
@@ -51,7 +51,9 @@ You need to add this to your application XML descriptor :
 				<service android:name="io.presage.services.PresageServiceImp"/>
 				<activity android:name="io.presage.activities.PresageActivity"
 						  android:label="@string/app_name"
-						  android:theme="@style/Presage.Theme.Transparent">
+						  android:theme="@style/Presage.Theme.Transparent"
+						  android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+						  android:hardwareAccelerated="true">
 					<intent-filter>
 						<action android:name="io.presage.intent.action.LAUNCH_WEBVIEW" />
 						<category android:name="android.intent.category.DEFAULT" />

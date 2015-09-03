@@ -91,7 +91,7 @@ package com.studiocadet.ane {
 			}
 			
 			log("Trying to serve an interstitial ad ...");
-			context.addEventListener(StatusEvent.STATUS, onStatusEvent, false, 0, true);
+			context.addEventListener(StatusEvent.STATUS, onStatusEvent);
 			context.call("ogury_ServeAd");
 			
 			function onStatusEvent(ev:StatusEvent):void {
